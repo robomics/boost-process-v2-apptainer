@@ -26,10 +26,13 @@
 int main() {
   try {
     boost::asio::io_context ctx;
-    boost::process::process proc(ctx, boost::process::environment::find_executable("ls"), {"."});
+    boost::process::process proc(ctx, boost::process::environment::find_executable("sleep"), {"5"});
     if (proc.running() || proc.exit_code() == 0) {
       std::println(stderr, "SUCCESS: child process successfully spawned!");
-      return 0;
+      std::println(stderr, "waiting for the child process to return...");
+      proc.wait();
+      std::println(stderr, "child process returned with exit code {}", proc.exit_code());
+      return proc.exit_code();
     }
     std::println(stderr, "FAIL: failed to spawn child process. Exit code: {}", proc.exit_code());
 
